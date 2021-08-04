@@ -1,20 +1,40 @@
-import Vue from 'vue'
-import App from './App'
+console.log("connected")
+const videoElem = document.getElementById("video");
+const startElem = document.getElementById("start");
+const stopElem = document.getElementById("stop");
 
-// BootstrapVue add
-import BootstrapVue from 'bootstrap-vue'
-// Router & Store add
-import router from './router'
-import store from './store'
-import { BootstrapVueIcons } from 'bootstrap-vue'
+// Options for getDisplayMedia()
 
-Vue.use(BootstrapVueIcons)
-Vue.use(BootstrapVue);
+var displayMediaOptions = {
+  video: {
+    cursor: "always"
+  },
+  audio: false
+};
 
-Vue.config.productionTip = false
+// Set event listeners for the start and stop buttons
+startElem.addEventListener("click", function(evt) {
+  startCapture();
+}, false);
 
-export default new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+stopElem.addEventListener("click", function(evt) {
+  stopCapture();
+}, false);
+
+
+async function startCapture(displayMediaOptions) {
+ 
+
+  try {
+    videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+  } catch(err) {
+    console.error("Error: " + err);
+  }
+
+}
+function stopCapture(evt) {
+  let tracks = videoElem.srcObject.getTracks();
+
+  tracks.forEach(track => track.stop());
+  videoElem.srcObject = null;
+}
